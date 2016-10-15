@@ -3,6 +3,8 @@ $(document).ready(function(){
     var arr = [];
     var count = 3;
 
+    // debugger;
+
     $("sing-button").click(function() {     
       for(var i = count; i > -1; i--){
         if(i>1) { arr.push('<li class = "bottle">'+ i +" bottles of beer on the wall"); }
