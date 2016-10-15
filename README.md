@@ -1,4 +1,4 @@
-# Welcome to the JSD920 Class Repo
+# jslez JSD920 repo
 
 ### Additional Resources:
 
