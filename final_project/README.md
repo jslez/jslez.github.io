@@ -6,11 +6,11 @@ Project is a web app that allows the user to input (a) a topic, and (b) a select
 
 ### Functional components
 
-1. tk
-2. tk
-3. tk
-4. tk
-5. tk
+1. Module that grabs all the new articles from each source
+2. Module that identifies the topic(s) of a given article, using an external API. Potentially also pulls other relevant available info
+3. Interface that allows the user to select a topic from a list (list can be edited, if user authenticates)
+4. Interface component that allows the user to select the news sources from a list (checkboxes)
+5. Component for FB or Twitter authentication
 
 
 ## Info from Angel and Joe
