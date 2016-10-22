@@ -1,0 +1,49 @@
+body {
+    background-color: black;
+}
+
+h1 {
+	color: #fff;
+	font-family: 'Open Sans';
+	font-size: 60px;
+	font-weight: 800;
+	letter-spacing: -2px;
+	line-height: 72px;
+	margin: 108px 0 60px;
+	position: relative;
+	text-align: center;
+	text-indent: -30px;
+}
+
+h1:before {
+	content: '^^^^^';
+	display: block;
+	letter-spacing: -1px;
+	position: absolute;
+	font-size: 14px;
+	font-weight: 800;
+	text-align: center;
+	top: -100px;
+	text-indent: 0px;
+	width: 100%;
+}
+
+p {
+	color: #aaa;
+	font-family: 'Playfair Display';
+	font-size: 22px;
+	font-weight: 500;
+	line-height: 40px;
+	margin-bottom: 48px;
+	text-align: center;
+}
+
+a {
+	color: #aaa;	border-bottom: 1px solid #aaa;
+	text-decoration: none;
+}
+
+a:hover {
+	border-bottom: 1px solid #fff;
+	color: #fff;
+}

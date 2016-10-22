@@ -42,46 +42,87 @@ $(document).ready(function () {
 	var defaultCity = "New York";
 
 	//Get the weather in NYC from the Open Weather Map API
-	var apiKey = 'ff606e9e1755c1137521201c3bcbac5d';
-	var weatherUrl = 'http://api.openweathermap.org/data/2.5/weather?id=5128638&&APPID=ff606e9e1755c1137521201c3bcbac5d&units=metric'
+	//var apiKey = 'ff606e9e1755c1137521201c3bcbac5d';
+	// var weatherUrl = 'http://api.openweathermap.org/data/2.5/weather?id=5128638&&APPID=ff606e9e1755c1137521201c3bcbac5d&units=metric'
+	getWeather(defaultCity);
+	buildcitiesUI(); //Build city selection UI and handlers
+	showFlickr(defaultCity); //Show the Flickr image: idea is to call this once at the beginning and then again if a new city is chosen
+})
+
+function getWeather(city) {   //get weather from API and call the display function to display it
+
+
+	var urlBase = 'http://api.openweathermap.org/data/2.5/find'
+	var arg = []
+	arg[0] = '?q=' + city
+	arg[1] = '&&APPID=ff606e9e1755c1137521201c3bcbac5d&units=metric'
+	weatherUrl = urlBase + arg
+
+	//Use AJAX to get the data from the API endpoint at weatherUrl:
 	$.ajax({
 		  url: weatherUrl,
 		  type: 'GET',
-		  success: function (result) { displayWeather(result) },
+		  success: displayWeather,   //what if we just wanted to return the data and use it in this function?
 		  error: function (xhr) { console.log(xhr); }
 		})
-	buildcitiesUI(); //Build city selection UI and handlers
-	showFlickr(defaultCity); //Show the Flickr image: idea is to call this once at the beginning and then again if a new city is chosen
-
-})
-
-
-function displayWeather(result){	//Display the weather in NYC on the web page
-	
-	//Pull the output we want from the result of the API call
-	console.log(result);
-	var textResult = JSON.stringify(result);
-	console.log(textResult);
-	temp = result.main.temp;
-	humidity = result.main.humidity;
-	speed = result.wind.speed;
-
-	//Build the output text
-	var output = []
-	output[0] = "Temperature is " + temp + " C";
-	output[1] = "Humidity is " + humidity + " %";
-	output[2] = "Wind speed is " + speed + " m/s";
-	console.log(output);
-
-	//Send output to the DOM
-	for (i in output) { $('#nyc-weather').append('<p>' + output[i] + '</p>'); }
 
 }
 
-function showFlickr(city) {
+function displayWeather(result){	//Display the weather in NYC on the web page
+	
+	// console.log("displayWeather -- city is:")
+	// console.log(city)
+
+	//Pull the output we want from the result of the API call
+	console.log("displayweather result");
+	console.log(result);
+	var textResult = JSON.stringify(result);
+	temp = result.list[0].main.temp;
+	humidity = result.list[0].main.humidity;
+	speed = result.list[0].wind.speed;
+	city = result.list[0].name; //??? WHAT IF THE CITYNAME WASN'T IN THE DATA GIVEN TO US? I can't find a way to pass the city name to these inner functions
+	//Build the output text
+	var outputArray = []
+	outputArray[0] = "Temperature is " + temp + " C";
+	outputArray[1] = "Humidity is " + humidity + "%";
+	outputArray[2] = "Wind speed is " + speed + " m/s";
+	console.log(outputArray);
+
+	//Send output to the DOM
+	// for (i in output) { $('#weather-div').append('<p>' + output[i] + '</p>'); }
+
+	//Display output using Handelbar template
+	var weatherObj = {
+		city: city,
+	    outputs: outputArray
+	};
+
+	//step 1: grab the handlebars HTML template
+    var source = $('#weather-template').html();
+	//step 2: compile the template using Handlebars.compile()
+    var template = Handlebars.compile(source);
+	//step 3: pass compile the obj
+    var weatherTemplate = template(weatherObj);
+	//step 4: append the obj(s) to the div element, after empyting it
+	$('#weather-div').empty();
+    $('#weather-div').append(weatherTemplate);
+
+}
+
+//Look up "city" in Flickr
+function showFlickr(city) { 
 	console.log(city + " is the chosen city");
-	var flickrUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=b619ab4dc2f3218b93edc2bdf586a175&text=new+york&format=json&nojsoncallback=1"
-	//Look up "city" in Flickr
+	var baseUrl = "https://api.flickr.com/services/rest/"
+	var params = [ "?method=flickr.photos.search",
+				// "?method=flickr.stats.getPopularPhotos",
+				"&api_key=b619ab4dc2f3218b93edc2bdf586a175",
+				"&text=" + city + "%20skyline",
+				"&format=json",
+				"&nojsoncallback=1"
+				]
+	var flickrUrl = [baseUrl, ...params].join("")
+	console.log(flickrUrl)
+	
 	$.ajax({
 	  url: flickrUrl,
 	  type: 'GET',
@@ -89,7 +130,6 @@ function showFlickr(city) {
 	  error: function (xhr) { console.log(xhr); }
 	})
 
-	//Show the image somehow
 }
 
 function displayImage(result) {
@@ -97,15 +137,22 @@ function displayImage(result) {
 	console.log(result);
 	console.log("First photo is " + result.photos.photo[0].title);
 	console.log(result.photos.photo[0]);
+	// console.log(result.photos.perpage + " photos per page")
 
-	var photo = result.photos.photo[0];
-	var photoUrl = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_" + "t.jpg";
-	var pictureHtml = '<img alt="'+ photo.title + '"src="' + photoUrl + '"/>' + '</a>'
+	photoNum = Math.floor(result.photos.perpage * Math.random()) //pick a random image from first page of results
 
-	console.log(pictureHtml);
-	$('#flickr-photo').append(pictureHtml);
+	var photo = result.photos.photo[photoNum];
+	var photoUrl = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_" + "h.jpg";
+	var pictureHtml = '<img alt="'+ photo.title + '"src="' + photoUrl + '"/>'
+
+	console.log("pictureHtml = " + pictureHtml);
+	
+	$('html').css( { "background-image" :    "url(" + photoUrl + ")",
+					 "background-size" :     "cover",
+					 "background-repeat" :   "no-repeat",
+					 // "background-position" : "center" 
+				   } );
 }
-
 
 function buildcitiesUI() {
 	var citiesObject = {
@@ -125,21 +172,28 @@ function buildcitiesUI() {
 	}
 
 	//HB needs to take in an object
-	var titleObj = {
-	    title: "Select another city",
-	    description: "",
+	var selectObj = {
+	    prompt: "Select another city",
 	    cities: citiesObject.cities
 	};
 
 	//step 1: grab the handlebars HTML template
     var source = $('#cities-template').html();
-    
 	//step 2: compile the template using Handlebars.compile()
     var template = Handlebars.compile(source);
-
 	//step 3: pass compile the obj
-    var titleTemplate = template(titleObj);
-
+    var selectTemplate = template(selectObj);
 	//step 4: append the obj(s) to the html element
-    $('#city-list').append(titleTemplate);
+    $('#city-list').append(selectTemplate);
+
+    //attach an action 'changeCity' to the city-selector menu
+    $('#city-selector').on("change", changeCity)
+
+    function changeCity() {
+    	console.log("change city!")
+    	city = $('#city-selector').val();
+    	console.log(city);
+    	getWeather(city);
+    	showFlickr(city);
+    }
 }

@@ -1,46 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  	<title></title>
+  	<title>Weather</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 
-<script id="cities-template" type="text/x-handlebars-template">
-		    <h2>{{title}}</h2>
-		    <p>{{description}}</p>
-		    <select id="jquery-list">
-   				{{#each cities}}
-     				 <option>{{this}}</option>
-   				{{/each}}
-   			</select>
-</script>
-
-<!-- 
-<script id="template" type="text/x-handlebars-template">
-		    <h1>{{title}}</h1>
-		    <p>{{description}}</p>
-		    <select id="jquery-list">
-   				{{#each cities}}
-     				 <option>{{this}}</option>
-   				{{/each}}
-   			</select>
-</script> -->
-
 <body>
 
-	<h1>Weather right now from Open Weather Maps API</h1>
-	<hr>
+<!-- 	<h1>Weather right now</h1>
+	<p><h2>From Open Weather Maps API</h2></p>
+	<hr> -->
 
-	<div>
-		<h2>Current Weather in NYC</h2>
-		<div id="nyc-weather"></div>
+<!-- 	<div>
+		<h3>Current Weather in NYC</h3>
+		<div id="weather-div"></div>
 	</div>
+	<hr> -->
+
+	<div id="pageHeader"></div>
+	
+	<div id="weather-div"></div>
+
+	<script id="weather-template" type="text/x-handlebars-template">
+	    <h1>{{city}}</h1>
+	    <div id='inner-div'>
+	    <p><h2>Weather right now from Open Weather</h2></p>
+			<div id='transbox'>
+			{{#each outputs}}
+	 			 <p>{{this}}</p>
+			{{/each}}
+			</div>
+		</div>
+	</script>
+
 	<hr>
-
-	<!-- <h4>Select a city:</h4> -->
-
 <!-- Handlebars template inserts all content into this div -->
-<div id="city-list"></div>
+	<div id="city-list"></div>
+
+	<script id="cities-template" type="text/x-handlebars-template">
+		    <select id="city-selector">
+   				{{#each cities}}
+     				 <option>{{this}}</option>
+   				{{/each}}
+   			</select> 
+	</script>
 
 <!--   <form>
     <input id="city-input" />
@@ -52,10 +55,10 @@
   	<script src="main.js" type="text/javascript" charset="utf-8" async defer></script>
 	<script src="handlebars.js"></script>
 
-<hr>
+	<hr>
 
-<!-- Display photo -->
-<div id="flickr-photo"></div>
+	<!-- Display photo -->
+	<div id="flickr-photo"></div>
 
 </body>
 </html>
