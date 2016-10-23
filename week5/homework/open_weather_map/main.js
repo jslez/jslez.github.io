@@ -32,10 +32,6 @@ Open Weather Map Instructions:
 
 */
 
-//TO DO STILL:
-//Identify how to choose the units
-//change hard-coded location ID to a selection
-
 
 $(document).ready(function () {
 
@@ -47,6 +43,9 @@ $(document).ready(function () {
 	getWeather(defaultCity);
 	buildcitiesUI(); //Build city selection UI and handlers
 	showFlickr(defaultCity); //Show the Flickr image: idea is to call this once at the beginning and then again if a new city is chosen
+
+	var button = $('#new-city-button').click(addNewCity)
+	var newThingInput = document.getElementById('new-city');
 })
 
 function getWeather(city) {   //get weather from API and call the display function to display it
@@ -77,6 +76,8 @@ function displayWeather(result){	//Display the weather in NYC on the web page
 	console.log("displayweather result");
 	console.log(result);
 	var textResult = JSON.stringify(result);
+
+	if (result.list.length > 0) {
 	temp = result.list[0].main.temp;
 	humidity = result.list[0].main.humidity;
 	speed = result.list[0].wind.speed;
@@ -106,7 +107,7 @@ function displayWeather(result){	//Display the weather in NYC on the web page
 	//step 4: append the obj(s) to the div element, after empyting it
 	$('#weather-div').empty();
     $('#weather-div').append(weatherTemplate);
-
+    }
 }
 
 //Look up "city" in Flickr
@@ -115,7 +116,7 @@ function showFlickr(city) {
 	var baseUrl = "https://api.flickr.com/services/rest/"
 	var params = [ "?method=flickr.photos.search",
 				// "?method=flickr.stats.getPopularPhotos",
-				"&api_key=b619ab4dc2f3218b93edc2bdf586a175",
+				"&api_key=07fe1a2b0b9c616e4254daff1cbd5b2d",
 				"&text=" + city + "%20skyline",
 				"&format=json",
 				"&nojsoncallback=1"
@@ -133,25 +134,35 @@ function showFlickr(city) {
 }
 
 function displayImage(result) {
+	//TO DO: make sure image is decent dimensions and make sure it's available in the size
 	console.log("displayImage function says: ")
 	console.log(result);
-	console.log("First photo is " + result.photos.photo[0].title);
-	console.log(result.photos.photo[0]);
-	// console.log(result.photos.perpage + " photos per page")
-
-	photoNum = Math.floor(result.photos.perpage * Math.random()) //pick a random image from first page of results
-
-	var photo = result.photos.photo[photoNum];
-	var photoUrl = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_" + "h.jpg";
-	var pictureHtml = '<img alt="'+ photo.title + '"src="' + photoUrl + '"/>'
-
-	console.log("pictureHtml = " + pictureHtml);
 	
-	$('html').css( { "background-image" :    "url(" + photoUrl + ")",
-					 "background-size" :     "cover",
-					 "background-repeat" :   "no-repeat",
-					 // "background-position" : "center" 
-				   } );
+	photoNum = Math.floor(result.photos.photo.length * Math.random()) //pick a random image from first page of results
+	
+	if (photoNum > 1) {
+		console.log("photoNum = " + photoNum + " of " + result.photos.photo.length)
+		console.log("First photo is " + result.photos.photo[0].title);
+		console.log(result.photos.photo[0]);
+		// console.log(result.photos.perpage + " photos per page")
+
+			var photo = result.photos.photo[photoNum];
+			var photoUrl = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_" + "h.jpg";
+			var pictureHtml = '<img alt="'+ photo.title + '"src="' + photoUrl + '"/>'
+
+			console.log("pictureHtml = " + pictureHtml);
+			
+			$('html').css( { "background-image" :    "url(" + photoUrl + ")",
+							 "background-size" :     "cover",
+							 "background-repeat" :   "no-repeat"
+			})
+	}
+	else {
+	console.log("else!!")
+		$('html').css( { 	 "background-image" :    "",
+							 "background-color" :    "black"
+						})
+	}
 }
 
 function buildcitiesUI() {
@@ -185,15 +196,38 @@ function buildcitiesUI() {
     var selectTemplate = template(selectObj);
 	//step 4: append the obj(s) to the html element
     $('#city-list').append(selectTemplate);
-
     //attach an action 'changeCity' to the city-selector menu
     $('#city-selector').on("change", changeCity)
+}
 
-    function changeCity() {
+ function changeCity() {
     	console.log("change city!")
     	city = $('#city-selector').val();
     	console.log(city);
     	getWeather(city);
     	showFlickr(city);
     }
+
+function addNewCity (event) {
+	event.preventDefault();
+	console.log("add new city function!")
+
+	var newCityField = document.getElementById('new-city');
+	var newCity = titleCase(newCityField.value);
+	newCityField.value = "";
+
+	//Add the new city to the menu IF IT'S NOT ALREADY THERE
+	var menu = document.getElementById('city-selector');
+	var newOption = document.createElement('option');
+	newOption.text = newCity;
+	menu.add(newOption);
+	menu.selectedIndex = (menu.length - 1);
+	console.log(menu.length);
+	changeCity()
+}
+
+function titleCase(str) {
+  return str.toLowerCase().split(' ').map(function(word) {
+    return word.replace(word[0], word[0].toUpperCase());
+  }).join(' ');
 }
