@@ -34,7 +34,6 @@ Open Weather Map Instructions:
 
 var defaultCity = "New York";
 var correctedCity = "";
-var newData = false;
 
 $(document).ready(function () {
 	getWeather(defaultCity);
@@ -50,7 +49,7 @@ function getWeather(city) {   //get weather from API and call the display functi
 	var arg = []
 	arg[0] = '?q=' + city
 	arg[1] = '&&APPID=ff606e9e1755c1137521201c3bcbac5d&units=metric'
-	weatherUrl = urlBase + arg
+	weatherUrl = urlBase + arg.join("")
 
 	//Use AJAX to get the data from the API endpoint at weatherUrl:
 	$.ajax({
@@ -213,7 +212,6 @@ function buildcitiesUI() {
     	var city = $('#city-selector').val();
     	console.log(city);
     	getWeather(city);
-    	console.log("THIS IS THE END OF CHANGECITY")
     }
 
 function addNewCity (event) {
