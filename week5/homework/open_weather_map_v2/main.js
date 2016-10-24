@@ -32,25 +32,20 @@ Open Weather Map Instructions:
 
 */
 
+var defaultCity = "New York";
+var correctedCity = "";
+var newData = false;
 
 $(document).ready(function () {
-
-	var defaultCity = "New York";
-
-	//Get the weather in NYC from the Open Weather Map API
-	//var apiKey = 'ff606e9e1755c1137521201c3bcbac5d';
-	// var weatherUrl = 'http://api.openweathermap.org/data/2.5/weather?id=5128638&&APPID=ff606e9e1755c1137521201c3bcbac5d&units=metric'
 	getWeather(defaultCity);
 	buildcitiesUI(); //Build city selection UI and handlers
-	showFlickr(defaultCity); //Show the Flickr image: idea is to call this once at the beginning and then again if a new city is chosen
-
+	// showFlickr(defaultCity); //Show the Flickr image: idea is to call this once at the beginning and then again if a new city is chosen
 	var button = $('#new-city-button').click(addNewCity)
 	var newThingInput = document.getElementById('new-city');
 })
 
 function getWeather(city) {   //get weather from API and call the display function to display it
-
-
+	console.log("Get weather function: " + city)
 	var urlBase = 'http://api.openweathermap.org/data/2.5/find'
 	var arg = []
 	arg[0] = '?q=' + city
@@ -64,62 +59,73 @@ function getWeather(city) {   //get weather from API and call the display functi
 		  success: displayWeather,   //what if we just wanted to return the data and use it in this function?
 		  error: function (xhr) { console.log(xhr); }
 		})
-
 }
 
-function displayWeather(result){	//Display the weather in NYC on the web page
-	
+function displayWeather(result) {	//Display the weather in NYC on the web page
 	//Clear what's already in the weather results div
 	$('#weather-div').empty();
 
 	//Pull the output we want from the result of the API call
-	console.log("displayweather result");
+	console.log("displayWeather result:");
 	console.log(result);
 	var textResult = JSON.stringify(result);
 
 	if (result.list.length > 0) {
-	temp = result.list[0].main.temp;
-	humidity = result.list[0].main.humidity;
-	speed = result.list[0].wind.speed;
-	city = result.list[0].name; //??? WHAT IF THE CITYNAME WASN'T IN THE DATA GIVEN TO US? I can't find a way to pass the city name to these inner functions
+		var temp = result.list[0].main.temp;
+		var humidity = result.list[0].main.humidity;
+		var speed = result.list[0].wind.speed;
+		var city = result.list[0].name; //??? WHAT IF THE CITYNAME WASN'T IN THE DATA GIVEN TO US? I can't find a way to pass the city name to these inner functions
+		console.log("displayWeather says city = " + city)
+		correctedCity = city;
+		console.log("displayWeather now says correctedCity = " + correctedCity)
 
-	//Build the output text
-	var outputArray = []
-	outputArray[0] = "Temperature is " + temp + " ºC";
-	outputArray[1] = "Humidity is " + humidity + "%";
-	outputArray[2] = "Wind speed is " + speed + " m/s";
-	console.log(outputArray);
-	
-	//Show the weather icon
-	iconCode = result.list[0].weather[0].icon
-	var iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
+		//Build the output text
+		var outputArray = []
+		outputArray[0] = "Temperature is " + temp + " ºC";
+		outputArray[1] = "Humidity is " + humidity + "%";
+		outputArray[2] = "Wind speed is " + speed + " m/s";
+		
+		//Show the weather icon
+		var iconCode = result.list[0].weather[0].icon
+		var iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
 
-	//Display output using Handelbar template
-	var weatherObj = {
-		city: city,
-		imgURL: iconUrl,
-	    outputs: outputArray
-	};
+		//Display output using Handelbar template
+		var weatherObj = {
+			city: city,
+			imgURL: iconUrl,
+		    outputs: outputArray
+		};
 
-	//step 1: grab the handlebars HTML template
-    var source = $('#weather-template').html();
-	//step 2: compile the template using Handlebars.compile()
-    var template = Handlebars.compile(source);
-	//step 3: pass compile the obj
-    var weatherTemplate = template(weatherObj);
-	//step 4: append the obj(s) to the div element
-    $('#weather-div').append(weatherTemplate);
+		//step 1: grab the handlebars HTML template
+	    var source = $('#weather-template').html();
+		//step 2: compile the template using Handlebars.compile()
+	    var template = Handlebars.compile(source);
+		//step 3: pass compile the obj
+	    var weatherTemplate = template(weatherObj);
+		//step 4: append the obj(s) to the div element
+	    $('#weather-div').append(weatherTemplate);
+
+	    //Show the new Flickr image
+	    showFlickr(correctedCity);
     }
+ 	else {
+ 		console.log("display-weather ELSE")
+ 		$('#city-selector')[0].selectedIndex = 0;
+ 	}
+ 	if (city == "") { 
+ 		$('#city-selector')[0].selectedIndex = 0;
+ 		changeCity()
+ 	}
 }
 
 //Look up "city" in Flickr
 function showFlickr(city) { 
-	console.log(city + " is the chosen city");
+	console.log("showFlickr says: " + city + " is the chosen city");
 	var baseUrl = "https://api.flickr.com/services/rest/"
 	var params = [ "?method=flickr.photos.search",
 				// "?method=flickr.stats.getPopularPhotos",
 				"&api_key=07fe1a2b0b9c616e4254daff1cbd5b2d",
-				"&text=" + city + "%20skyline",
+				"&text=" + city + "%20sky",
 				"&format=json",
 				"&nojsoncallback=1"
 				]
@@ -154,8 +160,8 @@ function displayImage(result) {
 
 			console.log("pictureHtml = " + pictureHtml);
 			
-			$('html').css( { "background-image" :    "url(" + photoUrl + ")",
-							 "background-size" :     "cover",
+			$('html').css( { "background-image"  :   "url(" + photoUrl + ")",
+							 "background-size"   :   "cover",
 							 "background-repeat" :   "no-repeat"
 			})
 	}
@@ -203,11 +209,11 @@ function buildcitiesUI() {
 }
 
  function changeCity() {
-    	console.log("change city!")
-    	city = $('#city-selector').val();
+    	console.log("changecity function!")
+    	var city = $('#city-selector').val();
     	console.log(city);
     	getWeather(city);
-    	showFlickr(city);
+    	console.log("THIS IS THE END OF CHANGECITY")
     }
 
 function addNewCity (event) {
@@ -224,7 +230,6 @@ function addNewCity (event) {
 	newOption.text = newCity;
 	menu.add(newOption);
 	menu.selectedIndex = (menu.length - 1);
-	console.log(menu.length);
 	changeCity()
 }
 
