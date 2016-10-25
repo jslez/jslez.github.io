@@ -45,7 +45,7 @@ $(document).ready(function () {
 
 function getWeather(city) {   //get weather from API and call the display function to display it
 	console.log("Get weather function: " + city)
-	var urlBase = 'http://api.openweathermap.org/data/2.5/find'
+	var urlBase = 'https://accesscontrolalloworiginall.herokuapp.com/http://api.openweathermap.org/data/2.5/find'
 	var arg = []
 	arg[0] = '?q=' + city
 	arg[1] = '&&APPID=ff606e9e1755c1137521201c3bcbac5d&units=metric'
