@@ -1,5 +1,6 @@
 # Final project plan (jslez)
 
+
 ## Project description
 
 Project is a web app that allows the user to input (a) a topic, and (b) a selection of news sources. It then displays a list of the latest articles on the topic selected in (a) from the news sources selected in (b).

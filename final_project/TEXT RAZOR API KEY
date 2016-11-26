@@ -1,0 +1,31 @@
+TEXT RAZOR API KEY
+2bc8c5fadcc47d02aaa1a140c7e46c8eb132e240d21317df60731746
+
+ENDPOINT
+http://api.textrazor.com
+SECURE ENDPOINT
+https://api.textrazor.com
+CALLING THE API
+
+The TextRazor API identifies each of your requests by your unique API Key, which you can find in the console.
+
+All endpoints expect the API Key to be passed as an HTTP header - "X-TextRazor-Key: YOUR_API_KEY".
+
+When calling the public TextRazor API you should always use the secure HTTPS endpoint to protect your credentials.
+
+To enable compression of the TextRazor response JSON, add the Accept-encoding: 'gzip' header to your request. This can significantly reduce the size of TextRazor responses, and is recommended for most requests if possible.
+
+curl -X POST \
+    -H "x-textrazor-key: YOUR_API_KEY" \
+    -d "extractors=entities,entailments" \
+    -d "text=Spain's stricken Bankia expects to sell off its vast portfolio of industrial holdings that includes a stake in the parent company of British Airways and Iberia." \
+    https://api.textrazor.com/
+
+
+
+AYLIEN
+App name	New Economy Lab's App
+App ID	f117e2e6
+Key	f6796f47115c6204a9388af25a78bdbb
+Endpoint	https://api.aylien.com/api/v1
+
