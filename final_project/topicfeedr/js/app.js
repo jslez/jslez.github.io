@@ -23,7 +23,8 @@ function getData(source) {   //get articles from API and call the display functi
 
 function useData(result) {
 	console.log("useData function:")
-	console.log ("result = ") + result
+	console.log ("result = ")
+	console.log(result)
 	// ### put the result into an object
 
 	// FUNCTION that creates an object that has the data we're interested in
@@ -68,14 +69,24 @@ function analyzeArticle(article) {
 	console.log("Analyze article function: ")
 	console.log(article)
 	testUrl = 'http://www.nytimes.com/2016/11/25/opinion/betsy-devos-and-the-wrong-way-to-fix-schools.html?action=click&pgtype=Homepage&clickSource=story-heading&module=opinion-c-col-right-region&region=opinion-c-col-right-region&WT.nav=opinion-c-col-right-region&_r=0'
-	var apiUrl = 'https://api.aylien.com/api/v1/concepts'
+	// var apiUrl = 'https://api.aylien.com/api/v1/concepts'
+    var apiUrl = 'https://accesscontrolalloworiginall.herokuapp.com/https://api.aylien.com/api/v1/concepts'
 
 	$.ajax({
 		  url: apiUrl,
 		  type: 'GET',
-		  headers: { 'X-AYLIEN-TextAPI-Application-Key': 'f6796f47115c6204a9388af25a78bdbb',
-					 'X-AYLIEN-TextAPI-Application-ID':  'f117e2e6' },
+		  host: 'api.aylien.com',
+		  // headers: { 'Accept': 'application/json',
+     				 // 'Content-Type': 'application/x-www-form-urlencoded',
+     				 // 'Content-Length': postData.length,
+		  //	  	 'X-AYLIEN-TextAPI-Application-Key': 'f6796f47115c6204a9388af25a78bdbb',
+		  //	     'X-AYLIEN-TextAPI-Application-ID':  'f117e2e6' },
 		  // data:{"url": testUrl},
+
+		  beforeSend: function(xhr) { 
+     			 xhr.setRequestHeader({'X-AYLIEN-TextAPI-Application-Key': 'f6796f47115c6204a9388af25a78bdbb',
+				 'X-AYLIEN-TextAPI-Application-ID':  'f117e2e6'}); 
+    },
 		  data: {"text": "Apple was founded by Steve Jobs, Steve Wozniak and Ronald Wayne."},
 		  crossDomain : true,
 		  success: useAnalysis,
