@@ -143,7 +143,6 @@ function getShares(article, source, endFlag, onComplete) {
 function getTopic2(article, source, xhrShares, endFlag, onComplete) {
 	var apiKey = '5f4b0287a2a758a3ae2bf44ffbb037f5' //Meaningcloud API key for @jslez
     var apiUrl = 'https://cors-anywhere.herokuapp.com/https://api.meaningcloud.com/topics-2.0'
-    // var apiUrl = 'https://api.meaningcloud.com/topics-2.0'
     var postData = article.description
     settings = {
 		  "async": true,
