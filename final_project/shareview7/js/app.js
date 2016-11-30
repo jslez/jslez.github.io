@@ -15,7 +15,11 @@ var pack = d3.pack()
     .padding(2);
 
 
-// ######## Set up the variables needed to get the articles and draw the circles
+// #############################################################################
+// ######## Main part of the app
+// #############################################################################
+
+//Set up the variables needed to get the articles and draw the circles
 var shareCutOff = 200; //was 500
 var allArticles = [];
 var sources = ["abc-news-au", "cnn", "associated-press", "bbc-news", "bloomberg", "cnn", "the-new-york-times", "the-wall-street-journal", "the-verge", "time", "usa-today", "the-washington-post",
