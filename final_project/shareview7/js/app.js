@@ -47,6 +47,8 @@ setInterval(function() {
 }, 300);  //200 milliseconds
 
 // Loop through each source
+
+
 var lastSourceFlag = false
 for (i=0; i<sources.length; i++) {
 	// $scope.status = "Processing source " + i + sources[i]   <---- HOW TO MAKE THIS WORK??
@@ -146,7 +148,7 @@ function getTopic2(article, source, xhrShares, endFlag, onComplete) {
     settings = {
 		  "async": true,
 		  "crossDomain": true,
-		  "url": "http://api.meaningcloud.com/topics-2.0",
+		  "url": "https://api.meaningcloud.com/topics-2.0",
 		  "method": "POST",
 		  "headers": { "content-type": "application/x-www-form-urlencoded" },
 		  "data": {
